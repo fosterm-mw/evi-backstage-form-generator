@@ -1,0 +1,18 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: appclaim-template
+  title: AppClaim Template
+  description: Create a new appclaim
+spec:
+  owner: team_a
+  type: service
+  parameters:
+  - title: AppClaim Details
+    required:
+      - appCode
+    properties:
+      appCode:
+        type: string
+        title: App Code
+        description: app Code

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+
 )
 
 func main() {
-	fmt.Printf("Hello World");
+	var c CRD
+	c.parseCRD()
 }

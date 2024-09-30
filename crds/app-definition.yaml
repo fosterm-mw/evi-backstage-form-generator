@@ -1,0 +1,491 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xapps.app.idp.mayo.edu
+spec:
+  claimNames:
+    categories:
+    - crossplane
+    - composition
+    - app
+    kind: AppClaim
+    plural: appclaims
+  defaultCompositeDeletePolicy: Background
+  defaultCompositionRef:
+    name: xapps-v1alpha1.app.idp.mayo.edu
+  defaultCompositionUpdatePolicy: Automatic
+  group: app.idp.mayo.edu
+  names:
+    categories:
+    - crossplane
+    - composition
+    - app
+    kind: XApp
+    plural: xapps
+  versions:
+  - name: v1alpha1
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            required:
+            - parameters
+            properties:
+              parameters:
+                type: object
+                required:
+                - appCode
+                - image
+                - ports
+                properties:
+                  appCode:
+                    type: string
+                    description: app code
+                  image:
+                    type: string
+                    description: image name
+                  args:
+                    type: array
+                    description: arguments for app container
+                    items:
+                      type: string
+                  ports:
+                    type: array
+                    description: list of ports
+                    items:
+                      type: object
+                      description: container port
+                      required:
+                      - port
+                      properties:
+                        port:
+                          type: number
+                          description: port number
+                        protocol:
+                          type: string
+                          description: port protocol
+                          default: TCP
+                          enum:
+                          - TCP
+                          - UDP
+                        name:
+                          type: string
+                          description: optional name of port
+                        expose:
+                          type: boolean
+                          description: Expose port as a service
+                  replicas:
+                    type: number
+                    description: number of pod replicas
+                    default: 1
+                  env:
+                    type: array
+                    description: list of container environment variables
+                    items:
+                      type: object
+                      description: pod environment variable
+                      required:
+                      - name
+                      properties:
+                        name:
+                          type: string
+                          description: variable name
+                        value:
+                          type: string
+                          description: variable value
+                        valueFrom:
+                          type: object
+                          description: get value from source
+                          properties:
+                            configMapKeyRef:
+                              type: object
+                              description: configmap reference
+                              required:
+                              - key
+                              properties:
+                                key:
+                                  type: string
+                                  description: configMap key
+                                name:
+                                  type: string
+                                  description: configMap name
+                                optional:
+                                  type: boolean
+                                  description: configMap optional
+                            fieldRef:
+                              type: object
+                              description: api object field reference
+                              required:
+                              - fieldPath
+                              properties:
+                                apiVersion:
+                                  type: string
+                                  description: reference apiVersion
+                                fieldPath:
+                                  type: string
+                                  description: reference field path
+                            resourceFieldRef:
+                              type: object
+                              description: resource field reference
+                              required:
+                              - resource
+                              properties:
+                                containerName:
+                                  type: string
+                                  description: container name
+                                divisor:
+                                  type: string
+                                  description: divisor
+                                resource:
+                                  type: string
+                                  description: resource to select
+                            secretKeyRef:
+                              type: object
+                              description: secret key ref
+                              required:
+                              - key
+                              properties:
+                                key:
+                                  type: string
+                                  description: The key of the secret to select from.  Must be a valid secret key.
+                                name:
+                                  type: string
+                                  description: Name of the referent
+                                optional:
+                                  type: boolean
+                                  description: Specify whether the Secret or its key must be defined
+                  podAnnotations:
+                    type: object
+                    description: Additional pod annotations
+                    additionalProperties:
+                      type: string
+                  resources:
+                    type: object
+                    properties:
+                      limits:
+                        type: object
+                        properties:
+                          cpu:
+                            type: string
+                            default: '200m'
+                          memory:
+                            type: string
+                            default: '256Mi'
+                      requests:
+                        type: object
+                        properties:
+                          cpu:
+                            type: string
+                            default: '100m'
+                          memory:
+                            type: string
+                            default: '128Mi'
+                  healthcheck:
+                    type: object
+                    description: specify healthcheck endpoint
+                    properties:
+                      initialDelaySeconds:
+                        type: number
+                        default: 30
+                      timeoutSeconds:
+                        type: number
+                        default: 10
+                      periodSeconds:
+                        type: number
+                        default: 30
+                      failureThreshold:
+                        type: number
+                        default: 3
+                      successThreshold:
+                        type: number
+                        default: 1
+                      path:
+                        type: string
+                        default: /
+                      port:
+                        type: number
+                  volumes:
+                    type: array
+                    description: pod volume mounts
+                    items:
+                      type: object
+                      description: pod volume mount
+                      required:
+                      - mountPath
+                      - name
+                      - volume
+                      properties:
+                        volume:
+                          type: object
+                          description: Volume configuration
+                          properties:
+                            configMap:
+                              type: object
+                              properties:
+                                defaultMode:
+                                  type: number
+                                items:
+                                  type: object
+                                  properties:
+                                    key:
+                                      type: string
+                                    mode:
+                                      type: number
+                                    path:
+                                      type: string
+                                name:
+                                  type: string
+                                optional:
+                                  type: boolean
+                            emptyDir:
+                              type: object
+                              properties:
+                                medium:
+                                  type: string
+                                sizeLimit:
+                                  type: string
+                            persistentVolumeClaim:
+                              type: object
+                              required:
+                              - claimName
+                              properties:
+                                claimName:
+                                  type: string
+                                readOnly:
+                                  type: boolean
+                            hostPath:
+                              type: object
+                              required:
+                              - path
+                              properties:
+                                path:
+                                  type: string
+                            secret:
+                              type: object
+                              properties:
+                                defaultMode:
+                                  type: number
+                                items:
+                                  type: array
+                                  items:
+                                    type: object
+                                    required:
+                                    - key
+                                    - path
+                                    properties:
+                                      key:
+                                        type: string
+                                      mode:
+                                        type: number
+                                      path:
+                                        type: string
+                                optional:
+                                  type: boolean
+                                secretName:
+                                  type: string
+                        mountPath:
+                          type: string
+                          description: Path within the container at which the volume should be mounted
+                        mountPropagation:
+                          type: string
+                          description: mountPropagation determines how mounts are propagated from the host to container and the other way around
+                        name:
+                          type: string
+                          description: This must match the Name of a Volume
+                        readOnly:
+                          type: boolean
+                          description: Mounted read-only if true, read-write otherwise (false or unspecified)
+                        subPath:
+                          type: string
+                          description: Path within the volume from which the container's volume should be mounted
+                        subPathExpr:
+                          type: string
+                          description: Expanded path within the volume from which the container's volume should be mounted. Behaves similarly to SubPath but environment variable references $(VAR_NAME) are expanded using the container's environment.
+                  cloudSqlProxy:
+                    type: object
+                    description: Enable CloudSQL proxy sidecar container
+                    properties:
+                      enable:
+                        type: boolean
+                      connection:
+                        type: string
+                        description: Name of CloudSQL database connection
+                      port:
+                        type: number
+                      autoAuth:
+                        type: boolean
+                  gcpWorkloadIdentity:
+                    type: object
+                    description: GCP service account for Workload Identity
+                    properties:
+                      enable:
+                        type: boolean
+                      additionalMembers:
+                        type: array
+                        description: Additonal Kubernetes service accounts to allow to impersonate GCP service account
+                        items:
+                          type: object
+                          required:
+                          - name
+                          properties:
+                            namespace:
+                              type: string
+                            name:
+                              type: string
+                      impersonators:
+                        type: array
+                        description: List of members that can impersonate GCP service account
+                        items:
+                          type: string
+                  secrets:
+                    type: array
+                    description: list of application secrets
+                    items:
+                      type: object
+                      required:
+                      - name
+                      - varName
+                      - key
+                      properties:
+                        name:
+                          type: string
+                        key:
+                          type: string
+                        varName:
+                          type: string
+                  sslMount:
+                    type: boolean
+                    description: Mount SSL certificates from the host machine
+                  enableNeg:
+                    type: boolean
+                    description: Enable network endpoint group for a service
+                  gkeIngress:
+                    type: object
+                    description: GKE Ingress configuration
+                    required:
+                    - hostnames
+                    properties:
+                      enable:
+                        type: boolean
+                      backendConfig:
+                        type: object
+                        properties:
+                          enable:
+                            type: boolean
+                          timeoutSec:
+                            type: number
+                            default: 30
+                          healthcheck:
+                            type: object
+                            properties:
+                              checkIntervalSec:
+                                type: number
+                              timeoutSec:
+                                type: number
+                              healthyThreshold:
+                                type: number
+                              unhealthyThreshold:
+                                type: number
+                              type:
+                                type: string
+                                enum:
+                                - HTTP
+                                - HTTPS
+                                - HTTP2
+                              requestPath:
+                                type: string
+                              port:
+                                type: number
+                      globalAddress:
+                        type: object
+                        properties:
+                          enable:
+                            type: boolean
+                            description: Create GCP global IP address
+                          deletionPolicy:
+                            type: string
+                            description: DeletionPolicy specifies what will happen to the underlying external when this managed resource is deleted - either "Delete" or "Orphan" the external resource.
+                            default: Orphan
+                            enum:
+                            - Orphan
+                            - Delete
+                      hostnames:
+                        type: array
+                        description: List of hostnames for ingress
+                        items:
+                          type: object
+                          required:
+                          - name
+                          properties:
+                            name:
+                              type: string
+                            paths:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  path:
+                                    type: string
+                                  pathType:
+                                    type: string
+                                  serviceName:
+                                    type: string
+                                  servicePort:
+                                    type: number
+                  monitoring:
+                    type: object
+                    properties:
+                      enable:
+                        type: boolean
+                        description: enable monitoring on application
+                      endpoints:
+                        type: array
+                        description: endpoints exposing promql metrics
+                        items:
+                          type: object
+                          properties:
+                            interval:
+                              type: string
+                              description: Interval at which Prometheus scrapes the metrics from the target.
+                              default: '30s'
+                            targetPort:
+                              type: number
+                              description: Name or number of the target port of the Pod object behind the Service. The port must be specified with the container’s port property.
+                            path:
+                              type: string
+                              description: HTTP path from which to scrape for metrics.
+                              default: /metrics
+                      tracing:
+                        type: object
+                        description: Tracing configuration
+                        required:
+                        - instrument
+                        properties:
+                          enable:
+                            type: boolean
+                            description: Enable tracing
+                          instrument:
+                            type: string
+                            description: Name of instrumentation to select. Choices include nodejs, java, go, or python
+                            enum:
+                            - nodejs
+                            - java
+                            - go
+                            - python
+                          namespace:
+                            type: string
+                            description: Optional namespace where OpenTelemetry Instrumentation exists.
+                          name:
+                            type: string
+                            description: Optional name of OpenTelemetry Instrumentation resource
+          status:
+            type: object
+            properties:
+              application:
+                type: object
+                description: Freeform field containing status information for deployment
+                x-kubernetes-preserve-unknown-fields: true
+    served: true
