@@ -21,3 +21,15 @@ func readYaml() map[string]interface{} {
 	
 	return crd
 }
+
+func (crd *CRD) ingestCRD() *CRD {
+	yamlFile, err := os.ReadFile("./crds/app-definition.yaml")
+	if err != nil {
+		log.Printf("yamlFile.Get err #%v", err)
+	}
+	err = yaml.Unmarshal(yamlFile, crd)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v", err)
+	}
+	return crd
+}

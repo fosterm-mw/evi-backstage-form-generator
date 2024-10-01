@@ -14,7 +14,7 @@ func (c *CRD) parseCRD() error {
 		log.Fatal("Error parsing claim name kind. Got no string value.")
 		return errors.New("Claim Name not available.")
 	}
-	c.claimName = claimName.(string)
+	/* c.claimName = claimName.(string) */
 	return nil
 }
 
