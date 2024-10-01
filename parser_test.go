@@ -33,4 +33,3 @@ func TestGetOpenAPISpecField(t *testing.T) {
 		t.Fatalf("getValueByString(testData, claimName) = %v, wanted %v", got, want)
 	}
 }
-

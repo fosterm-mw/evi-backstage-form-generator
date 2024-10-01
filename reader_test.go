@@ -1,8 +1,8 @@
-package main 
+package main
 
 import (
-	"testing"
 	"log"
+	"testing"
 )
 
 func TestCRDIngestion(t *testing.T) {
@@ -14,4 +14,8 @@ func TestCRDIngestion(t *testing.T) {
 	if want != got {
 		t.Fatalf("getValueByString(testData, claimName) = %v, wanted %v", got, want)
 	}
+}
+
+func TestCRDApiVersionIngestion(t *testing.T) {
+
 }

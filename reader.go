@@ -1,8 +1,8 @@
 package main
 
 import (
-	"os"
 	"log"
+	"os"
 
 	"gopkg.in/yaml.v2"
 )
@@ -18,7 +18,7 @@ func readYaml() map[string]interface{} {
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
 	}
-	
+
 	return crd
 }
 

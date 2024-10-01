@@ -1,9 +1,9 @@
 package main
 
 import (
-	"reflect"
-	"log"
 	"errors"
+	"log"
+	"reflect"
 )
 
 func (c *CRD) parseCRD() error {
@@ -26,4 +26,3 @@ func getValueByString(spec interface{}, searchTerm string) interface{} {
 	}
 	return nil
 }
-
